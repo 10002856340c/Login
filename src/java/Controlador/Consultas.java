@@ -49,7 +49,7 @@ obtenidas desde una base de datos, así como Metadatos sobre la consulta y los t
 //finalemente vamos hacer un cierre de conexion 
     }finally{
         try {
-        //si la conexion no se ha cerrado 
+        //si la conexion esta abierta 
         if(getConexion()!=null){
         //la cerramos close()
         getConexion().close();
@@ -71,5 +71,53 @@ obtenidas desde una base de datos, así como Metadatos sobre la consulta y los t
     return false;
 
 }
+
+
+public boolean registrar(String nombre,String apellido, String username,String password){
+
+/*PreparedStatemen --> En los sistemas de administración de bases de datos, una declaración preparada, 
+una declaración parametrizada o una consulta parametrizada es una función que se utiliza para compilar previamente el código SQL, 
+separándolo de los datos.*/
+        PreparedStatement pst =null;
+
+    try {
+        /*Agregamos nuestra consulta en sintaxis sql organizado respectivamente como esta en el metodo */
+            String consulta2="insert into usuario(nombre,apellido,username,password) values (?,?,?,?)";
+
+            /*Hacemos la conexion de nuestra consulta */
+             pst=getConexion().prepareStatement(consulta2);
+         /*Asignamos los valores por medio de un set 
+        estos valores que se van agregar son los mismos que le vamos a pasar por el metodo  */
+    
+          pst.setString(1, nombre);
+          pst.setString(2, apellido);
+          pst.setString(3, username);
+          pst.setString(4, password);
+
+         //si hay una modificacion en la actualizacion de alguna tabla 
+          if(pst.executeUpdate()==1){
+          return true;
+        }
+        
+    } catch (Exception e) {
+        System.err.println("Error 1"+e.getMessage());
+    }finally{
+            //Cerramos la conexion cuando este abierta despues de que se haga la ejecucion de la sentencia 
+        try {
+            if(getConexion()!=null){
+              getConexion().close();
+            }if(pst!=null){
+                pst.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Error 2"+e.getMessage());
+        }
+    }
+
+
+
+    return  false;
+}
+
 }
     
